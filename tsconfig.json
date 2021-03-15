@@ -17,7 +17,7 @@
       "noImplicitThis": true,
       "noImplicitAny": false,
       "esModuleInterop": true,
-      "strictNullChecks": true,
+      "strictNullChecks": false,
       "suppressImplicitAnyIndexErrors": true,
       "allowSyntheticDefaultImports": true,
       "noUnusedLocals": true,

@@ -1,7 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { IPackageJson } from '../types';
-import { packageJsonName } from '../constants';
+import { PackageJson_Name, Yarn_Workspace } from '../constants/index';
+
+interface IPackageObj {
+    url: string; 
+    json: IPackageJson;
+}
 
 export function readPackageJson(url: string): IPackageJson | null {
     const str = fs.readFileSync(url, 'utf-8');
@@ -14,19 +19,12 @@ export function readPackageJson(url: string): IPackageJson | null {
     }
 }
 
-let count = 0;
-
-export function findPackageJson(url: string): { url: string; json: IPackageJson; }[] {
+export function findPackageJson(url: string): IPackageObj[] {
     const packageJsonList: { url: string; json: IPackageJson; }[] = [];
     let currentUrl= url;
 
     while (path.dirname(currentUrl) !== currentUrl) {
-        count++;
-        if (count === 100) {
-            break;
-        }
-
-        const packageJsonUrl = path.resolve(currentUrl, packageJsonName)
+        const packageJsonUrl = path.resolve(currentUrl, PackageJson_Name)
         if (fs.existsSync(packageJsonUrl)) {
             const json = readPackageJson(packageJsonUrl);
             if (json) {
@@ -37,4 +35,9 @@ export function findPackageJson(url: string): { url: string; json: IPackageJson;
     }
 
     return packageJsonList;
+}
+
+export function findWorkspacePackageJson(packageList: IPackageObj[]): IPackageObj | null {
+    const packageObj = packageList.find(p => !!p.json[Yarn_Workspace]);
+    return packageObj || null;
 }
